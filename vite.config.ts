@@ -1,24 +1,12 @@
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-import {defineConfig, loadEnv} from 'vite';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/MYRA-ArchiGen-AI/', // Tên repository của bạn trên GitHub
+  // Tên repository của bạn trên GitHub để các đường dẫn tĩnh (css, js) không bị lỗi 404
+  base: '/MYRA-ArchiGen-AI/', 
+  build: {
+    outDir: 'dist',
+  },
 })
-    define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-    },
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, '.'),
-      },
-    },
-    server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
-      hmr: process.env.DISABLE_HMR !== 'true',
-    },
-  };
-});
