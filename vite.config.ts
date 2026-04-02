@@ -8,10 +8,6 @@ export default defineConfig(({mode}) => {
   return {
     plugins: [react(), tailwindcss()],
  base: '/MYRA-ArchiGen-AI/',
-  build: {
-    outDir: 'dist',
-  },
-})
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
