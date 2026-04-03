@@ -1,6 +1,7 @@
 import React from 'react';
-import { Home, Search, User } from 'lucide-react';
+import { Home, Search, User, Key, X, Check } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useSettings } from '../contexts/SettingsContext';
 
 interface HeaderProps {
   activeTab: string;
@@ -9,6 +10,14 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
   const { user, signIn, signOut } = useAuth();
+  const { geminiApiKey, setGeminiApiKey } = useSettings();
+  const [showKeyInput, setShowKeyInput] = React.useState(false);
+  const [tempKey, setTempKey] = React.useState(geminiApiKey || '');
+
+  const handleSaveKey = () => {
+    setGeminiApiKey(tempKey.trim() || null);
+    setShowKeyInput(false);
+  };
   const navItems = [
     { id: 'edu', label: 'EDU' },
     { id: 'arch2', label: 'ARCH 2' },
@@ -55,7 +64,47 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
         </nav>
 
         {/* Actions / Profile */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="relative flex items-center">
+            {showKeyInput ? (
+              <div className="absolute right-0 flex items-center gap-2 bg-black/90 border border-white/20 rounded-lg p-1 pr-2 shadow-2xl animate-in fade-in slide-in-from-right-4 duration-300">
+                <input
+                  type="password"
+                  placeholder="Paste Gemini API Key..."
+                  value={tempKey}
+                  onChange={(e) => setTempKey(e.target.value)}
+                  className="bg-transparent text-[10px] px-2 py-1 outline-none w-40 md:w-60 text-accent-cyan"
+                  autoFocus
+                />
+                <button 
+                  onClick={handleSaveKey}
+                  className="p-1 hover:bg-white/10 rounded-md text-green-400 transition-colors"
+                  title="Save Key"
+                >
+                  <Check size={16} />
+                </button>
+                <button 
+                  onClick={() => setShowKeyInput(false)}
+                  className="p-1 hover:bg-white/10 rounded-md text-red-400 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setShowKeyInput(true)}
+                className={`p-2 transition-all duration-300 rounded-lg flex items-center gap-2 ${
+                  geminiApiKey 
+                    ? 'text-accent-cyan bg-accent-cyan/10 ring-1 ring-accent-cyan/30' 
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+                title={geminiApiKey ? "API Key is set" : "Set Gemini API Key"}
+              >
+                <Key size={18} />
+                {geminiApiKey && <span className="text-[10px] font-bold hidden sm:inline uppercase tracking-tighter">API ACTIVE</span>}
+              </button>
+            )}
+          </div>
           <button className="p-2 text-gray-400 hover:text-white transition-colors">
             <Search size={20} />
           </button>

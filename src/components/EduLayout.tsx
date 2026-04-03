@@ -3,6 +3,7 @@ import { Camera, Download, ChevronDown, Sparkles, Lightbulb, Send, Loader2, Uplo
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI } from '@google/genai';
 import ReactMarkdown from 'react-markdown';
+import { useSettings } from '../contexts/SettingsContext';
 
 const SUBJECTS = [
   'Toán học', 'Ngữ văn', 'Tiếng Anh', 'Vật lý', 'Hóa học', 'Sinh học', 
@@ -13,6 +14,7 @@ const SUBJECTS = [
 const GRADES = Array.from({ length: 12 }, (_, i) => `Lớp ${i + 1}`).reverse();
 
 export const EduLayout: React.FC = () => {
+  const { getApiKey } = useSettings();
   const [subject, setSubject] = useState(SUBJECTS[0]);
   const [grade, setGrade] = useState(GRADES[0]);
   const [question, setQuestion] = useState('');
@@ -44,10 +46,7 @@ export const EduLayout: React.FC = () => {
     setResult(null);
 
     try {
-      // @ts-ignore
-      const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) ? process.env.API_KEY : process.env.GEMINI_API_KEY;
-      if (!apiKey) throw new Error("Missing Gemini API Key");
-      
+      const apiKey = getApiKey();
       const ai = new GoogleGenAI({ apiKey });
       const prompt = `Bạn là một chuyên gia giáo dục Việt Nam. Hãy giải bài tập sau đây theo chuẩn của Bộ Giáo dục và Đào tạo Việt Nam.
 Môn học: ${subject}
